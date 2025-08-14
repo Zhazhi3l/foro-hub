@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/topicos")
 public class TopicosController {
@@ -48,11 +50,14 @@ public class TopicosController {
     @Transactional
     @PutMapping
     public ResponseEntity actualizar(@RequestBody @Valid DatosActualizacionTopico datos){
-        var topico = topicoRepository.getReferenceById(datos.id());
+        Optional<Topico> topico = topicoRepository.findById(datos.id());
 
-        topico.actualizarInformacion(datos);
-
-        return ResponseEntity.ok(new DatosDetalleTopico(topico));
+        if(!topico.isPresent()) {
+            topico.get().actualizarInformacion(datos);
+            return ResponseEntity.ok(new DatosDetalleTopico(topico.get()));
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @Transactional
