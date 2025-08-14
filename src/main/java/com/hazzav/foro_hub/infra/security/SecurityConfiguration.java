@@ -1,4 +1,4 @@
-package com.hazzav.foro_hub.infra;
+package com.hazzav.foro_hub.infra.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
