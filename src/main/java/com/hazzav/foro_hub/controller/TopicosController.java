@@ -1,9 +1,6 @@
 package com.hazzav.foro_hub.controller;
 
-import com.hazzav.foro_hub.domain.topico.DatosDetalleTopico;
-import com.hazzav.foro_hub.domain.topico.DatosResgistroTopico;
-import com.hazzav.foro_hub.domain.topico.Topico;
-import com.hazzav.foro_hub.domain.topico.TopicoRepository;
+import com.hazzav.foro_hub.domain.topico.*;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +31,37 @@ public class TopicosController {
         return ResponseEntity.created(uri).body(new DatosDetalleTopico(topico));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity detallar(@PathVariable Long id){
+        var topico = topicoRepository.getReferenceById(id);
+
+        return ResponseEntity.ok(new DatosDetalleTopico(topico));
+    }
+
     @GetMapping
     public ResponseEntity<Page<DatosDetalleTopico>> listar(@PageableDefault(size = 10, sort={"fecha"}) Pageable paginacion){
         var pagina = topicoRepository.findAllByActivoTrue(paginacion)
                 .map(DatosDetalleTopico::new);
         return ResponseEntity.ok(pagina);
+    }
+
+    @Transactional
+    @PutMapping
+    public ResponseEntity actualizar(@RequestBody @Valid DatosActualizacionTopico datos){
+        var topico = topicoRepository.getReferenceById(datos.id());
+
+        topico.actualizarInformacion(datos);
+
+        return ResponseEntity.ok(new DatosDetalleTopico(topico));
+    }
+
+    @Transactional
+    @DeleteMapping("/{id}")
+    public ResponseEntity eliminar(@PathVariable Long id){
+        var topico = topicoRepository.getReferenceById(id);
+        topico.eliminar();
+
+        return ResponseEntity.noContent().build();
     }
 
 }

@@ -1,6 +1,7 @@
 package com.hazzav.foro_hub.domain.topico;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -35,6 +36,30 @@ public class Topico {
         this.status = Status.ACTIVO;
         this.autor = datos.autor();
         this.curso = datos.curso();
+    }
+
+    public void actualizarInformacion(@Valid DatosActualizacionTopico datos) {
+        if(datos.titulo() != null){
+            this.titulo = datos.titulo();
+        }
+        if(datos.mensaje() != null){
+            this.mensaje = datos.mensaje();
+        }
+        if(datos.autor() != null){
+            this.autor = datos.autor();
+        }
+        if(datos.curso() != null){
+            this.curso = datos.curso();
+        }
+        if(datos.estado() != null){
+            this.status = datos.estado();
+        }
+        this.fecha = LocalDateTime.now();
+    }
+
+    public void eliminar() {
+        this.activo = false;
+        this.status = Status.INACTIVO;
     }
 
 }
